@@ -3,3 +3,4 @@ let b:did_ftplugin = 1
 let b:undo_ftplugin = "setl ts< sw<"
 
 setlocal tabstop=2 shiftwidth=2
+setlocal foldmethod=syntax
