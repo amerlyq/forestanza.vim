@@ -92,19 +92,24 @@ sy sync fromstart
 " USE: patt/list after other rules, no necessary for 'contains' in them,
 " sy keyword myword HELP containedin=cComment contained
 
+" TODO -- add comments group -- for multiline splits
+" :syn match  vimComment +"[^"]\+$+
+" :syn region vimCommand start="set" end="$" contains=vimComment keepend
+
+" WARNING \zs can be possibly slow -- due to similarity with (..)@<=
 "  skip="\v^\_s*[^:~|<]"
 sy region fzaOrigin keepend
-      \ start="\v^\_s*[^:~|<]" end="\v^\_s*[:~|<]" "me=e-1
-      " \ contains=fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
-" sy region fzaPhonetics keepend
-"       \ start="\v^\_s*:" skip="\v^\_s*:" end="\v^\_s*[^:]"me=e-1
-"       \ contains=fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
-" sy region fzaTranslation keepend
-"       \ start="\v^\_s*\~" skip="\v^\_s*\~" end="\v^\_s*[^\~]"me=e-1
-"       \ contains=fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
+      \ start="\v\z(^\_s*\zs[^:~|<[:space:]])" skip="\z1" end="$" "me=s-1
+      \ contains=fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
+sy region fzaPhonetics keepend
+      \ start="\v\z(^\_s*\zs:)" skip="\z1" end="$"
+      \ contains=fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
+sy region fzaTranslation keepend
+      \ start="\v\z(^\_s*\zs\~)" skip="\z1" end="$"
+      \ contains=fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
 hi def link fzaOrigin Special
-" hi def link fzaPhonetics Comment
-" hi def link fzaTranslation Statement
+hi def link fzaPhonetics Comment
+hi def link fzaTranslation Statement
 
 "" NOTE
 "oneline" -- end of start patt and start of end patt must be within one line.

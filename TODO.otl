@@ -4,3 +4,8 @@ SEE
 Use perl-compatible regex
 := Consider using similar mechanics for conversion perl+yml -> vim?
 	https://github.com/othree/eregex.vim
+
+
+TODO
+	[_] When using 'gq' for alignment on 80 -- repeat prefix character
+		:= See in votl?
