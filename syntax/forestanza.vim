@@ -32,7 +32,7 @@ syn sync fromstart
 " syn keyword fzaMarks  NOT contained
 " hi def link fzaMarks  Underlined
 
-" " syn match  fzaBrace1   '[()]'   contained
+" syn match  fzaBrace1   '[()]'   contained
 " syn match  fzaBrace2   '[\[\]]' contained
 " syn match  fzaBrace3   '[{}]'   contained
 " """ Styles -- ignore if already specified
@@ -65,32 +65,21 @@ syn sync fromstart
 " syn keyword myword HELP containedin=cComment contained
 
 
-"" USE also for jap numbers
-syn match  fzaNumber   '[0-9]\+'
+syn match  fzaNumber '[0-9]\+'
+syn match  fzaNumberEnc '[0-9]\+' contained containedin=fzaEnclosed
 hi def link fzaNumber Number
+hi def link fzaNumberEnc Tag
 
-" 'oneline' -- end of start patt and start of end patt -- within one line.
-" -- This can't be changed by a skip pattern that matches a line break.
-syn region fzaComment start="#" end="$" oneline keepend
+syn region fzaComment start="#" end="#" end="$" keepend oneline
+syn region fzaEnclosed start="<" end=">" end="$" keepend oneline
 hi def link fzaComment Comment
+hi def link fzaEnclosed Underlined
 
 syn cluster fzaMarkupG contains=fzaComment,
       \ fzaPars1,fzaBrace1,fzaBrace2,fzaBrace3
-" OR
-" syn keyword A aaa
-" syn keyword B bbb
-" syn cluster SmallGroup contains=B
-" syn cluster BigGroup contains=A,@SmallGroup
-" syn match Stuff "( aaa bbb )" contains=@BigGroup
-" syn cluster BigGroup remove=B	" no effect, since B isn't in BigGroup
-" syn cluster SmallGroup remove=B	" now bbb isn't matched within Stuff
 
 
 """ Main
-"" NOTE External back-ref grouping -- can't refer multiline matches
-" syn region hereDoc start="<<\z(\I\i*\)" end="^\z1$"
-" syn region foo start="start \(\I\i*\)" skip="not end \z1" end="end \z1"
-
 " WARNING \zs can be possibly slow -- due to similarity with (..)@<=
 syn region fzaOrigin contains=@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs[^:~|<[:space:]])" skip="\z1" end="$" "me=s-1
@@ -98,47 +87,36 @@ syn region fzaPhonetics contains=@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs:)" skip="\z1" end="$"
 syn region fzaTranslation contains=@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs\~)" skip="\z1" end="$"
-hi def link fzaOrigin Special
+hi def link fzaOrigin Normal
 hi def link fzaPhonetics Comment
-hi def link fzaTranslation Statement
-
-"" NOTE contains= --  allows to start inside, recursivly extend,
-" ALL | ALLBUT,{gr-nm},.. | TOP | TOP,{gr-nm},..  CONTAINED | CONTAINED,{gr-nm},..
-" Can use patt for all already defined groups =Comment.*,Keyw[0-3] OR ALLBUT,<patt>
-
-" USE:
-" set foldmethod=syntax
+hi def link fzaTranslation Constant
 
 """ Table -- TODO fold
-"" IDEA: all table -- one fold, each same indent inside region -- nested fold
-" NOTE transparent may be useful for highlighting first word in list of syns
 syn cluster fzaTableG contains=fzaComment,
-      " \ fzaTableRow,fzaTableCell,fzaSynMain,fzaSynonyms
+      \ fzaTableRow,fzaTableCell,fzaSynMain,fzaSynonyms
 
-" transparent
-" syn region fzaTable matchgroup=fzaTable fold transparent
-"       \ start="\v^\s{-}\|" skip="\v\_$\_s{-}\|" end="$"
-"       \ contains=fzaTable ",@fzaTableG
-      " \ start="\v^\_s*\zs\|" skip="$\_s*|" end="$"
-" hi def link fzaTable  Structure
+" BUG not resetting fold when returning from nested
+" syn region fzaTable fold transparent matchgroup=fzaTable
+"       \ contains=fzaTablePar,@fzaTableG
+"       \ start="^\s\{-}|" skip="\_$\_s\{-}|" end="$"
+syn region fzaTablePar fold transparent
+      \ contains=fzaTableSub,@fzaTableG
+      \ start="^\s\{-}|" skip="\_$\n\s\{-}|" end="$"
+syn region fzaTableSub contained fold transparent
+      \ contains=@fzaTableG
+      \ start="^\s\{-1,}|" skip="\_$\n\s\{-1,}|" end="$"
 
-" SEE
-"   http://stackoverflow.com/questions/8443218/syntax-highlighting-of-nested-comment-folds-in-vim
+syn match  fzaTableRow    "|\|-\+" contained containedin=fzaTable
+hi def link fzaTableRow  Structure
+" syn region fzaTableCell contained oneline
+"       \ start="|" end="|"  " contains=fzaTableRow
+" hi def link fzaTableCell  Structure
 
-hi documentation ctermfg=darkcyan
-" syn region genericdoc start="|{" end="|}" transparent
-" syn region collection start="|{" end="|}"
-syn region documentation matchgroup=documentation fold
-      \ start="|{" end="|}" contains=documentation
-
-" syn match  fzaTableRow    '|\|-\+' contained containedin=fzaTable
-" syn region fzaTableCell
-"       \ start="|" end="|" contains=fzaTableRow
-" hi def link fzaTableRow  Structure
-
-" syn region fzaSynMain  start=":" end="," keepend contained
+" NOTE transparent may be useful for highlighting first word in list of syns
+syn region fzaSynMain  contained keepend oneline
+      \ start=":"ms=s+1  end=",\|#"me=e-1 end="$"
+hi def link fzaSynMain Constant
 " syn region fzaSynonyms start="\v\|@1<=%([^|]+$)@=" end="$" keepend contains=fzaSynMain
-" hi def link fzaSynMain Special
 " hi def link fzaSynonyms Comment
 
 
@@ -157,3 +135,23 @@ unlet s:save_cpo
 " :syntime report
 "" Hack -- different syntax for windows of the same file, like in bash
 " :ownsyntax awk
+
+"" NOTE contains= --  allows to start inside, recursivly extend,
+" ALL | ALLBUT,{gr-nm},.. | TOP | TOP,{gr-nm},..  CONTAINED | CONTAINED,{gr-nm},..
+" Can use patt for all already defined groups =Comment.*,Keyw[0-3] OR ALLBUT,<patt>
+
+"" NOTE External back-ref grouping -- can't refer multiline matches
+" syn region hereDoc start="<<\z(\I\i*\)" end="^\z1$"
+" syn region foo start="start \(\I\i*\)" skip="not end \z1" end="end \z1"
+
+"" NOTE 'oneline' -- end of start patt and start of end patt -- within one line.
+" -- This can't be changed by a skip pattern that matches a line break.
+
+"" NOTE cluster order
+" syn keyword A aaa
+" syn keyword B bbb
+" syn cluster SmallGroup contains=B
+" syn cluster BigGroup contains=A,@SmallGroup
+" syn match Stuff "( aaa bbb )" contains=@BigGroup
+" syn cluster BigGroup remove=B	" no effect, since B isn't in BigGroup
+" syn cluster SmallGroup remove=B	" now bbb isn't matched within Stuff
