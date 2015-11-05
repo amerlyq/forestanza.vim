@@ -14,3 +14,9 @@ setl formatoptions+=roqmMj
 " BUG nested comment indention don't work
 setl comments=s:#,e:#,b:#,b::,b:~,:\|,
 setl commentstring=#\ %s
+
+
+"" Key-maps
+nnoremap ga :Tabularize /<bar>\<bar>:\<bar>>/l1l1r1c1l1<CR>
+nnoremap g; 0f:<Left>
+nnoremap g\ 0f<bar><Right>
