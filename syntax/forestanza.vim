@@ -12,35 +12,17 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-
 syn sync fromstart
-"" USE as common for separate *.fjp, *.fkr
-" runtime! syntax/forestanza.vim
-
-"" Including:
-" In cpp.vim:
-" runtime! syntax/c.vim
-" unlet b:current_syntax
-" In perl.vim:
-" :syntax include @Pod <sfile>:p:h/pod.vim
-" :syntax region perlPOD start="^=head" end="^=cut" contains=@Pod
 
 
-""" Lexems
-"" USE 'display' for jap lexems (oneliners/words only)
-"" USE 'nextgroup' for jap composite words -- highlight <1> only if after <2>
-" syn keyword fzaMarks  NOT contained
-" hi def link fzaMarks  Underlined
-
-
-"" THINK use concealends -- to hide Pars when not current line
-"" THINK is it possible to increase color number from innermost instead outermost?
-"" Parentheses
+""" Parentheses
+" THINK use concealends -- to hide Pars when not current line
+" THINK is it possible to increase color number from innermost instead outermost?
 let quots = [[ 'fzaPars', '(', ')'], [ 'fzaBrks', '\[', '\]'], [ 'fzaBrcs', '{', '}']]
 let clrs = ['Statement', 'Structure', 'Special']
 let def_r = 'syn region %s contained matchgroup=%s containedin=%s start="%s" end="%s"'
 for [nm, s, e] in quots
-  let others = []
+  let others = ['@fzaLexems']
   for oth in filter(map(copy(quots), 'v:val[0]'), 'v:val !~ "'.nm.'"')
     " BUG: can't derive right index composition for [],{} inside (), etc
     for i in range(len(clrs)) | call add(others, oth.i) | endfor
@@ -60,9 +42,13 @@ syn match  fzaNumberEnc '[0-9]\+' contained containedin=fzaEnclosed
 hi def link fzaNumber Number
 hi def link fzaNumberEnc Tag
 
+"" Keywords has sense only as separate objs. USE in comments for notes?
+" syn keyword fzaMarks  NOT contained
+" hi def link fzaMarks  Underlined
 syn region fzaComment start="#" end="#" end="$" keepend oneline
-syn region fzaEnclosed start="<" end=">" end="$" keepend oneline
 hi def link fzaComment Comment
+
+syn region fzaEnclosed start="<" end=">" end="$" keepend oneline
 hi def link fzaEnclosed Underlined
 
 syn cluster fzaMarkupG contains=fzaComment,@NoSpell,
@@ -71,14 +57,14 @@ syn cluster fzaMarkupG contains=fzaComment,@NoSpell,
 
 """ Main
 " WARNING \zs can be possibly slow -- due to similarity with (..)@<=
-syn region fzaOrigin contains=@fzaMarkupG keepend fold
+syn region fzaOrigin contains=@fzaLxmOriginG,@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs[^:~|<[:space:]])" skip="\z1" end="$" "me=s-1
-syn region fzaPhonetics contains=@fzaMarkupG keepend fold
+syn region fzaPhonetic contains=@fzaLxmPhoneticG,@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs:)" skip="\z1" end="$"
 syn region fzaTranslation contains=@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs\~)" skip="\z1" end="$"
 hi def link fzaOrigin Normal
-hi def link fzaPhonetics Comment
+hi def link fzaPhonetic Comment
 hi def link fzaTranslation Constant
 
 
@@ -111,6 +97,23 @@ hi def link fzaTableRow  Structure
 " hi def link fzaSynonyms Comment
 
 
+""" Lexems
+" ATTENTION THINK one file is logically inconvinient -- as you need
+"   different specific terms for different books, read at the same time
+let lang_groups = [
+      \ ['syn include @%s %s', 'fzaLxmOriginG', 'origin'],
+      \ ['syn include @%s %s', 'fzaLxmPhoneticG', 'phonetic'],
+      \ ['source %s%s', '', 'colors'],
+      \]  " <sfile>:p:h/fza_jap.vim
+for [fmt, grp, nm] in lang_groups
+  let path=expand('~/.cache/forestanza/'.nm.'.vim')
+  if filereadable(path)
+    exe printf(fmt, grp, path)
+  endif
+endfor
+
+
+
 """ Footer
 let b:current_syntax = 'forestanza'
 let &cpo = s:save_cpo
@@ -126,6 +129,9 @@ unlet s:save_cpo
 " :syntime report
 "" Hack -- different syntax for windows of the same file, like in bash
 " :ownsyntax awk
+
+"" USE 'display' for jap lexems (oneliners/words only)
+"" USE 'nextgroup' for jap composite words -- highlight <1> only if after <2>
 
 "" NOTE contains= --  allows to start inside, recursivly extend,
 " ALL | ALLBUT,{gr-nm},.. | TOP | TOP,{gr-nm},..  CONTAINED | CONTAINED,{gr-nm},..
