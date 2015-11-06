@@ -18,11 +18,13 @@ syn sync fromstart
 """ Parentheses
 " THINK use concealends -- to hide Pars when not current line
 " THINK is it possible to increase color number from innermost instead outermost?
+" IDEA: inherit color from lexem before closing parenthesis, like: ( -no)
 let quots = [[ 'fzaPars', '(', ')'], [ 'fzaBrks', '\[', '\]'], [ 'fzaBrcs', '{', '}']]
-let clrs = ['Statement', 'Structure', 'Special']
-let def_r = 'syn region %s contained matchgroup=%s containedin=%s start="%s" end="%s"'
+let clrs = ['Special', 'Structure', 'Statement']
+let grp_l = 'contained contains='.join(['@fzaLxmOriginG', '@fzaLxmPhoneticG'], ',')
+let def_r = 'syn region %s matchgroup=%s containedin=%s '.grp_l.' start="%s" end="%s"'
 for [nm, s, e] in quots
-  let others = ['@fzaLexems']
+  let others = []
   for oth in filter(map(copy(quots), 'v:val[0]'), 'v:val !~ "'.nm.'"')
     " BUG: can't derive right index composition for [],{} inside (), etc
     for i in range(len(clrs)) | call add(others, oth.i) | endfor
@@ -69,7 +71,7 @@ hi def link fzaTranslation Constant
 
 
 """ Table
-syn cluster fzaTableG contains=fzaComment,
+syn cluster fzaTableG contains=@fzaLxmOriginG,fzaComment,
       \ fzaTableRow,fzaTableCell,fzaSynMain,fzaSynonyms
 
 " syn region fzaTable fold transparent matchgroup=fzaTable
