@@ -82,7 +82,7 @@ syn region fzaTableSub contained fold transparent
       \ contains=@fzaTableG
       \ start="^\s\{-1,}|" skip="\_$\n\s\{-1,}|" end="$"
 
-syn match  fzaTableRow    "|\|\W-\+\W" contained containedin=fzaTable
+syn match  fzaTableRow    "|\|-\+" contained containedin=fzaTable
 hi def link fzaTableRow  Structure
 " syn region fzaTableCell contained oneline
 "       \ start="|" end="|"  " contains=fzaTableRow
