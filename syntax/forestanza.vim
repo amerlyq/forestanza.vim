@@ -16,6 +16,7 @@ syn sync fromstart
 
 
 """ Parentheses
+" DEV: switch pars modes by cmd: monochrome, rainbow_delim, rainbow_content
 " THINK use concealends -- to hide Pars when not current line
 " THINK is it possible to increase color number from innermost instead outermost?
 " IDEA: inherit color from lexem before closing parenthesis, like: ( -no)
@@ -29,7 +30,7 @@ for [nm, s, e] in quots
     " BUG: can't derive right index composition for [],{} inside (), etc
     for i in range(len(clrs)) | call add(others, oth.i) | endfor
   endfor
-  exe printf('syn cluster %s contains=@NoSpell,%s', nm.'G', join(others, ','))
+  exe printf('syn cluster %s contains=%s', nm.'G', join(others, ','))
   for lvl in range(len(clrs))
     let icont = (lvl + len(clrs) - 1) % len(clrs)
     exe printf(def_r, nm.lvl, nm.lvl.'s', nm.icont.',@'.nm.'G', s, e)
@@ -53,7 +54,7 @@ hi def link fzaComment Comment
 syn region fzaEnclosed start="<" end=">" end="$" keepend oneline
 hi def link fzaEnclosed Underlined
 
-syn cluster fzaMarkupG contains=fzaComment,@NoSpell,
+syn cluster fzaMarkupG contains=fzaComment,
       \ fzaPars0,fzaBrks0,fzaBrcs0
 
 
