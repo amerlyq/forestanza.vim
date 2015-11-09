@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 " Vim syntax file
 " Language:     Forestanza (Translation assistant)
 
