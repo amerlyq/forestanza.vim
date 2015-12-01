@@ -5,6 +5,10 @@ Use perl-compatible regex
 := Consider using similar mechanics for conversion perl+yml -> vim?
 	https://github.com/othree/eregex.vim
 
+DEV
+	[_] Show article from yarxi.pl in split window
+		[_] For whole word -- as preview
+		[_] For all its composite kanji -- as several split windows on right of main
 
 TODO
 	[_] When using 'gq' for alignment on 80 -- repeat prefix character
