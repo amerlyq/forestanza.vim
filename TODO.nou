@@ -1,0 +1,16 @@
+% SEE
+  https://github.com/tyru/skk.vim/
+
+Use perl-compatible regex
+:= Consider using similar mechanics for conversion perl+yml -> vim?
+  https://github.com/othree/eregex.vim
+
+% DEV
+  [_] Show article from yarxi.pl in split window
+    For whole word -- as preview
+    For all its composite kanji -- as several split windows on right of main
+    ? Nested tag-history: search kanji/word directly in articles
+
+% TODO
+  [_] When using 'gq' for alignment on 80 -- repeat prefix character
+     ? See in votl
