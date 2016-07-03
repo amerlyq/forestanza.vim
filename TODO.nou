@@ -1,9 +1,16 @@
+%%%%% forestanza.vim
+plugin for vim: specific highlighting and editing optimization
+
 % SEE
   https://github.com/tyru/skk.vim/
 
+% Regex convert
 Use perl-compatible regex
-:= Consider using similar mechanics for conversion perl+yml -> vim?
+    THINK: prefer perl (or what compatible with js) instead of vimre?
+    SEE:(vim) :h perl-patterns
+Consider using similar mechanics for conversion perl+yml -> vim?
   https://github.com/othree/eregex.vim
+
 
 % DEV
   [_] Show article from yarxi.pl in split window
@@ -11,6 +18,27 @@ Use perl-compatible regex
     For all its composite kanji -- as several split windows on right of main
     ? Nested tag-history: search kanji/word directly in articles
 
+  IDEA: edits in vim -> export back into db
+    > To benefit all other formats/viewers
+    > Considered as the best idea, especially for ranobe TL process
+    [_] Shortcuts to fast populate *.yml with new words
+      = open split with local .yml, fast open ',.[0-9]' common .yml
+    [_] Reformat synonyms table to easily copy entries into yml as whole row
+      = can be also kept hidden and being copied in yml format only on click
+
+  THINK I could use python inside vim to regenerate and reload syntax files
+
+
 % TODO
   [_] When using 'gq' for alignment on 80 -- repeat prefix character
      ? See in votl
+  [_] FIX generation from yml vim syntax highlightings
+  [_] Concealing in yml of '|' and replacing with bold ', '
+  [_] THINK if possible to fix auto indentation for yml
+
+
+%%% Syntax
+  [_] Generate vimrc from all yml cfgs into ~/.cache/forestanza.vim
+    OR load by :pythondo, assuming already installed pyYaml
+  [_] Load syntax by 'source forestanza.vim' inside local <ranobe>/.vimrc
+    OR inside <ranobe>/ place script to launch: vim -c 'source ...'
