@@ -44,7 +44,7 @@ endfor
 """ Common
 syn match  fzaNumber '[0-9]\+'
 syn match  fzaNumberEnc '[0-9]\+' contained containedin=fzaEnclosed
-hi def link fzaNumber Number
+hi def link fzaNumber Underlined
 hi def link fzaNumberEnc Tag
 
 "" Keywords has sense only as separate objs. USE in comments for notes?
@@ -63,11 +63,11 @@ syn cluster fzaMarkupG contains=fzaComment,
 """ Main
 " WARNING \zs can be possibly slow -- due to similarity with (..)@<=
 syn region fzaOrigin contains=@fzaLxmOriginG,@fzaMarkupG keepend fold
-      \ start="\v\z(^\_s*\zs[^:~|<[:space:]])" skip="\z1" end="$" "me=s-1
+      \ start="\v\z(^\_s*\zs[^:=|<[:space:]])" skip="\z1" end="$" "me=s-1
 syn region fzaPhonetic contains=@fzaLxmPhoneticG,@fzaMarkupG keepend fold
-      \ start="\v\z(^\_s*\zs:)" skip="\z1" end="$"
+      \ start="\v\z(^\_s*\zs[:])" skip="\z1" end="$"
 syn region fzaTranslation contains=@fzaMarkupG keepend fold
-      \ start="\v\z(^\_s*\zs\~)" skip="\z1" end="$"
+      \ start="\v\z(^\_s*\zs[=])" skip="\z1" end="$"
 hi def link fzaOrigin Normal
 hi def link fzaPhonetic Comment
 hi def link fzaTranslation Constant
@@ -117,6 +117,13 @@ for [fmt, grp, nm] in lang_groups
   endif
 endfor
 
+
+""" All
+" ATT: Declared last to have highest priority in regions match order.
+syn region fzaSentence fold keepend transparent
+  \ contains=fzaNumber,fzaOrigin,fzaPhonetic,fzaTranslation,fzaTableSub,fzaTablePar
+  \ matchgroup=fzaNumber excludenl start='^.\+'
+  \ matchgroup=NONE end='\%$' end='^\n'
 
 
 """ Footer
