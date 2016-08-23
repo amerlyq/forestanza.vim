@@ -35,6 +35,9 @@ Consider using similar mechanics for conversion perl+yml -> vim?
   [_] FIX generation from yml vim syntax highlightings
   [_] Concealing in yml of '|' and replacing with bold ', '
   [_] THINK if possible to fix auto indentation for yml
+  [_] FoldText
+    * no bold -- ordinary text
+    * commands to choose one-line content -- display origin/phonetics/translate
 
 
 %%% Syntax
