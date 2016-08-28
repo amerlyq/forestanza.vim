@@ -68,14 +68,17 @@ syn region fzaPhonetic contains=@fzaLxmPhoneticG,@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs[:])" skip="\z1" end="$"
 syn region fzaTranslation contains=@fzaMarkupG keepend fold
       \ start="\v\z(^\_s*\zs[=])" skip="\z1" end="$"
-hi def link fzaOrigin Normal
+hi! fzaOrigin guifg=#fdf6e3
 hi def link fzaPhonetic Comment
 hi def link fzaTranslation Constant
 
 
 """ Table
+syn match fzaWordDelim '·'
+hi def link fzaWordDelim Comment
+
 syn cluster fzaTableG contains=@fzaLxmOriginG,fzaComment,
-      \ fzaTableRow,fzaTableCell,fzaSynMain,fzaSynonyms
+      \ fzaTableRow,fzaTableCell,fzaSynMain,fzaSynonyms,fzaWordDelim
 
 " syn region fzaTable fold transparent matchgroup=fzaTable
 "       \ contains=fzaTablePar,@fzaTableG
@@ -119,10 +122,16 @@ endfor
 
 
 """ All
+syn region fzaTLsection fold keepend transparent
+  \ contains=fzaTranslation
+  \ excludenl start='^=\@=' skip='^= .\+'
+  \ end='\%$' end='^=\@!'
+  " \ matchgroup=fzaTranslation excludenl start='^= .\+' skip='^= .\+'
+
 " ATT: Declared last to have highest priority in regions match order.
 syn region fzaSentence fold keepend transparent
-  \ contains=fzaNumber,fzaOrigin,fzaPhonetic,fzaTranslation,fzaTableSub,fzaTablePar
-  \ matchgroup=fzaNumber excludenl start='^.\+'
+  \ contains=fzaNumber,fzaOrigin,fzaPhonetic,fzaTLsection,fzaTableSub,fzaTablePar
+  \ matchgroup=fzaNumber excludenl start='^.\+' skip='^.'
   \ matchgroup=NONE end='\%$' end='^\n'
 
 
